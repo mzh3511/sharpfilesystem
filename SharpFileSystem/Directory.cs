@@ -7,12 +7,12 @@ namespace SharpFileSystem
         public Directory(IFileSystem fileSystem, FileSystemPath path) : base(fileSystem, path)
         {
             if (!path.IsDirectory)
-                throw new ArgumentException("The specified path is no directory.", "path");
+                throw new ArgumentException("The specified path is no directory.", nameof(path));
         }
 
         public bool Equals(Directory other)
         {
-            return ((IEquatable<FileSystemEntity>)this).Equals(other);
+            return ((IEquatable<FileSystemEntity>) this).Equals(other);
         }
     }
 }

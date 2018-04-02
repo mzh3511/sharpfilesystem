@@ -1,9 +1,9 @@
 using System;
-using SharpFileSystem.FileSystems;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SharpFileSystem.FileSystems;
 using SharpFileSystem.IO;
 
 namespace SharpFileSystem.Tests.FileSystems
@@ -11,19 +11,6 @@ namespace SharpFileSystem.Tests.FileSystems
     [TestFixture]
     public class PhysicalFileSystemTest
     {
-        string Root { get; set; }
-        PhysicalFileSystem FileSystem { get; set; }
-        string AbsoluteFileName { get; set; }
-
-        string FileName { get; }
-        FileSystemPath FileNamePath { get; }
-
-        public PhysicalFileSystemTest()
-        {
-            FileName = "x";
-            FileNamePath = FileSystemPath.Root.AppendFile(FileName);
-        }
-
         [SetUp]
         public void Initialize()
         {
@@ -36,8 +23,23 @@ namespace SharpFileSystem.Tests.FileSystems
         [TearDown]
         public void Cleanup()
         {
-            using (FileSystem) { }
+            using (FileSystem)
+            {
+            }
             System.IO.Directory.Delete(Root, true);
+        }
+
+        private string Root { get; set; }
+        private PhysicalFileSystem FileSystem { get; set; }
+        private string AbsoluteFileName { get; set; }
+
+        private string FileName { get; }
+        private FileSystemPath FileNamePath { get; }
+
+        public PhysicalFileSystemTest()
+        {
+            FileName = "x";
+            FileNamePath = FileSystemPath.Root.AppendFile(FileName);
         }
 
         [Test]
@@ -76,6 +78,24 @@ namespace SharpFileSystem.Tests.FileSystems
         }
 
         [Test]
+        public void CreateFile_Empty()
+        {
+            using (var stream = FileSystem.CreateFile(FileNamePath))
+            {
+            }
+
+            CollectionAssert.AreEqual(
+                new byte[] { },
+                System.IO.File.ReadAllBytes(AbsoluteFileName));
+            using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
+            {
+                CollectionAssert.AreEqual(
+                    new byte[] { },
+                    stream.ReadAllBytes());
+            }
+        }
+
+        [Test]
         public void CreateFile_Exists()
         {
             Assert.IsFalse(System.IO.File.Exists(AbsoluteFileName));
@@ -97,24 +117,6 @@ namespace SharpFileSystem.Tests.FileSystems
             using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
             {
                 CollectionAssert.AreEqual(content2, stream.ReadAllBytes());
-            }
-        }
-
-        [Test]
-        public void CreateFile_Empty()
-        {
-            using (var stream = FileSystem.CreateFile(FileNamePath))
-            {
-            }
-
-            CollectionAssert.AreEqual(
-                new byte[] { },
-                System.IO.File.ReadAllBytes(AbsoluteFileName));
-            using (var stream = FileSystem.OpenFile(FileNamePath, FileAccess.Read))
-            {
-                CollectionAssert.AreEqual(
-                    new byte[] { },
-                    stream.ReadAllBytes());
             }
         }
     }

@@ -1,11 +1,9 @@
-using SharpFileSystem.FileSystems;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
+using SharpFileSystem.FileSystems;
 using SharpFileSystem.IO;
 
 namespace SharpFileSystem.Tests.FileSystems
@@ -13,9 +11,6 @@ namespace SharpFileSystem.Tests.FileSystems
     [TestFixture]
     public class MemoryFileSystemTest
     {
-        MemoryFileSystem FileSystem { get; set; }
-        FileSystemPath RootFilePath { get; } = FileSystemPath.Root.AppendFile("x");
-
         [SetUp]
         public void Initialize()
         {
@@ -25,8 +20,13 @@ namespace SharpFileSystem.Tests.FileSystems
         [TearDown]
         public void Cleanup()
         {
-            using (FileSystem) { }
+            using (FileSystem)
+            {
+            }
         }
+
+        private MemoryFileSystem FileSystem { get; set; }
+        private FileSystemPath RootFilePath { get; } = FileSystemPath.Root.AppendFile("x");
 
         [Test]
         public void CreateFile()
@@ -34,7 +34,7 @@ namespace SharpFileSystem.Tests.FileSystems
             // File shouldn’t exist prior to creation.
             Assert.IsFalse(FileSystem.Exists(RootFilePath));
 
-            var content = new byte[] { 0xde, 0xad, 0xbe, 0xef, };
+            var content = new byte[] {0xde, 0xad, 0xbe, 0xef};
             using (var xStream = FileSystem.CreateFile(RootFilePath))
             {
                 // File now should exist.
@@ -60,6 +60,23 @@ namespace SharpFileSystem.Tests.FileSystems
         }
 
         [Test]
+        public void CreateFile_Empty()
+        {
+            using (var stream = FileSystem.CreateFile(RootFilePath))
+            {
+            }
+
+            Assert.IsTrue(FileSystem.Exists(RootFilePath));
+
+            using (var stream = FileSystem.OpenFile(RootFilePath, FileAccess.Read))
+            {
+                CollectionAssert.AreEqual(
+                    new byte[] { },
+                    stream.ReadAllBytes());
+            }
+        }
+
+        [Test]
         public void CreateFile_Exists()
         {
             Assert.IsFalse(FileSystem.Exists(RootFilePath));
@@ -81,23 +98,8 @@ namespace SharpFileSystem.Tests.FileSystems
 
             Assert.IsTrue(FileSystem.Exists(RootFilePath));
             using (var stream = FileSystem.OpenFile(RootFilePath, FileAccess.Read))
+            {
                 CollectionAssert.AreEqual(content, stream.ReadAllBytes());
-        }
-
-        [Test]
-        public void CreateFile_Empty()
-        {
-            using (var stream = FileSystem.CreateFile(RootFilePath))
-            {
-            }
-
-            Assert.IsTrue(FileSystem.Exists(RootFilePath));
-
-            using (var stream = FileSystem.OpenFile(RootFilePath, FileAccess.Read))
-            {
-                CollectionAssert.AreEqual(
-                    new byte[] { },
-                    stream.ReadAllBytes());
             }
         }
 
@@ -113,7 +115,7 @@ namespace SharpFileSystem.Tests.FileSystems
 
                 // Should exist once.
                 CollectionAssert.AreEquivalent(
-                    new[] { RootFilePath, },
+                    new[] {RootFilePath},
                     FileSystem.GetEntities(FileSystemPath.Root).ToArray());
             }
         }

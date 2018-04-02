@@ -7,51 +7,20 @@ using SharpFileSystem.FileSystems;
 
 namespace SharpFileSystem.SharpZipLib
 {
-    public class SharpZipLibFileSystem: IFileSystem
+    public class SharpZipLibFileSystem : IFileSystem
     {
-        private ZipFile ZipFile { get; set; }
-
-        public static SharpZipLibFileSystem Open(Stream s)
-        {
-            return new SharpZipLibFileSystem(new ZipFile(s));
-        }
-
-        public static SharpZipLibFileSystem Create(Stream s)
-        {
-            return new SharpZipLibFileSystem(ZipFile.Create(s));
-        }
-
         private SharpZipLibFileSystem(ZipFile zipFile)
         {
             ZipFile = zipFile;
         }
+
+        private ZipFile ZipFile { get; }
 
         public void Dispose()
         {
             if (ZipFile.IsUpdating)
                 ZipFile.CommitUpdate();
             ZipFile.Close();
-        }
-
-        protected FileSystemPath ToPath(ZipEntry entry)
-        {
-            return FileSystemPath.Parse(FileSystemPath.DirectorySeparator + entry.Name);
-        }
-
-        protected string ToEntryPath(FileSystemPath path)
-        {
-            // Remove heading '/' from path.
-            return path.Path.TrimStart(FileSystemPath.DirectorySeparator);
-        }
-
-        protected ZipEntry ToEntry(FileSystemPath path)
-        {
-            return ZipFile.GetEntry(ToEntryPath(path));
-        }
-
-        protected IEnumerable<ZipEntry> GetZipEntries()
-        {
-            return ZipFile.Cast<ZipEntry>();
         }
 
         public ICollection<FileSystemPath> GetEntities(FileSystemPath path)
@@ -62,7 +31,7 @@ namespace SharpFileSystem.SharpZipLib
                 .Select(entryPath => entryPath.ParentPath == path
                     ? entryPath
                     : path.AppendDirectory(entryPath.RemoveParent(path).GetDirectorySegments()[0])
-                    )
+                )
                 .Distinct()
                 .ToList();
         }
@@ -103,7 +72,38 @@ namespace SharpFileSystem.SharpZipLib
             ZipFile.Delete(ToEntryPath(path));
         }
 
-        public class MemoryZipEntry: MemoryFileSystem.MemoryFile, IStaticDataSource
+        public static SharpZipLibFileSystem Open(Stream s)
+        {
+            return new SharpZipLibFileSystem(new ZipFile(s));
+        }
+
+        public static SharpZipLibFileSystem Create(Stream s)
+        {
+            return new SharpZipLibFileSystem(ZipFile.Create(s));
+        }
+
+        protected FileSystemPath ToPath(ZipEntry entry)
+        {
+            return FileSystemPath.Parse(FileSystemPath.DirectorySeparator + entry.Name);
+        }
+
+        protected string ToEntryPath(FileSystemPath path)
+        {
+            // Remove heading '/' from path.
+            return path.Path.TrimStart(FileSystemPath.DirectorySeparator);
+        }
+
+        protected ZipEntry ToEntry(FileSystemPath path)
+        {
+            return ZipFile.GetEntry(ToEntryPath(path));
+        }
+
+        protected IEnumerable<ZipEntry> GetZipEntries()
+        {
+            return ZipFile.Cast<ZipEntry>();
+        }
+
+        public class MemoryZipEntry : MemoryFileSystem.MemoryFile, IStaticDataSource
         {
             public Stream GetSource()
             {

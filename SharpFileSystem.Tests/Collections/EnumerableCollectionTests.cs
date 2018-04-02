@@ -18,27 +18,21 @@ namespace SharpFileSystem.Tests.Collections
         }
 
         [Test]
-        public void When_CopyToTooSmallArray_Expect_ArgumentOutOfRangeException()
-        {
-            var input = new[] {"a", "b", "c"};
-            var enumerableCollection = new EnumerableCollection<string>(input, input.Length);
-            var output = new string[2];
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                enumerableCollection.CopyTo(output, 0);
-            });
-        }
-
-        [Test]
         public void When_CopyToInvalidIndex_Expect_ArgumentOutOfRangeException()
         {
             var input = new[] {"a", "b", "c"};
             var enumerableCollection = new EnumerableCollection<string>(input, input.Length);
             var output = new string[3];
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                enumerableCollection.CopyTo(output, 1);
-            });
+            Assert.Throws<ArgumentOutOfRangeException>(() => { enumerableCollection.CopyTo(output, 1); });
+        }
+
+        [Test]
+        public void When_CopyToTooSmallArray_Expect_ArgumentOutOfRangeException()
+        {
+            var input = new[] {"a", "b", "c"};
+            var enumerableCollection = new EnumerableCollection<string>(input, input.Length);
+            var output = new string[2];
+            Assert.Throws<ArgumentOutOfRangeException>(() => { enumerableCollection.CopyTo(output, 0); });
         }
     }
 }

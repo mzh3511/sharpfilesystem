@@ -1,7 +1,5 @@
-using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
@@ -49,13 +47,15 @@ namespace SharpFileSystem.Tests.SharpZipLib
         private readonly FileSystemPath fileInDirectoryPath = FileSystemPath.Parse("/directory/fileInDirectory.txt");
 
         [Test]
-        public void GetEntitiesOfRootTest()
+        public void ExistsTest()
         {
-            CollectionAssert.AreEquivalent(new[]
-            {
-                textfileAPath,
-                directoryPath
-            }, fileSystem.GetEntities(FileSystemPath.Root).ToArray());
+            Assert.IsTrue(fileSystem.Exists(FileSystemPath.Root));
+            Assert.IsTrue(fileSystem.Exists(textfileAPath));
+            Assert.IsTrue(fileSystem.Exists(directoryPath));
+            Assert.IsTrue(fileSystem.Exists(fileInDirectoryPath));
+            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/nonExistingFile")));
+            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/nonExistingDirectory/")));
+            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/directory/nonExistingFileInDirectory")));
         }
 
         [Test]
@@ -68,15 +68,13 @@ namespace SharpFileSystem.Tests.SharpZipLib
         }
 
         [Test]
-        public void ExistsTest()
+        public void GetEntitiesOfRootTest()
         {
-            Assert.IsTrue(fileSystem.Exists(FileSystemPath.Root));
-            Assert.IsTrue(fileSystem.Exists(textfileAPath));
-            Assert.IsTrue(fileSystem.Exists(directoryPath));
-            Assert.IsTrue(fileSystem.Exists(fileInDirectoryPath));
-            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/nonExistingFile")));
-            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/nonExistingDirectory/")));
-            Assert.IsFalse(fileSystem.Exists(FileSystemPath.Parse("/directory/nonExistingFileInDirectory")));
+            CollectionAssert.AreEquivalent(new[]
+            {
+                textfileAPath,
+                directoryPath
+            }, fileSystem.GetEntities(FileSystemPath.Root).ToArray());
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright © 2010")]
 
 #if DEBUG
- [assembly: AssemblyConfiguration("Debug")]
+[assembly: AssemblyConfiguration("Debug")]
 #else
 [assembly: AssemblyConfiguration("Release")]
 #endif

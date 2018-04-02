@@ -6,20 +6,6 @@ namespace SharpFileSystem.Collections
 {
     public class TypeCombinationDictionary<T>
     {
-        public class TypeCombinationEntry
-        {
-            public Type SourceType { get; private set; }
-            public Type DestinationType { get; private set; }
-            public T Value { get; private set; }
-
-            public TypeCombinationEntry(Type sourceType, Type destinationType, T value)
-            {
-                SourceType = sourceType;
-                DestinationType = destinationType;
-                Value = value;
-            }
-        }
-
         private readonly LinkedList<TypeCombinationEntry> _registrations = new LinkedList<TypeCombinationEntry>();
 
         public IEnumerable<TypeCombinationEntry> GetSupportedRegistrations(Type sourceType, Type destinationType)
@@ -27,7 +13,8 @@ namespace SharpFileSystem.Collections
             return
                 _registrations.Where(
                     r =>
-                    r.SourceType.IsAssignableFrom(sourceType) && r.DestinationType.IsAssignableFrom(destinationType));
+                        r.SourceType.IsAssignableFrom(sourceType) &&
+                        r.DestinationType.IsAssignableFrom(destinationType));
         }
 
         public TypeCombinationEntry GetSupportedRegistration(Type sourceType, Type destinationType)
@@ -57,5 +44,18 @@ namespace SharpFileSystem.Collections
             _registrations.AddLast(new TypeCombinationEntry(sourceType, destinationType, value));
         }
 
+        public class TypeCombinationEntry
+        {
+            public TypeCombinationEntry(Type sourceType, Type destinationType, T value)
+            {
+                SourceType = sourceType;
+                DestinationType = destinationType;
+                Value = value;
+            }
+
+            public Type SourceType { get; }
+            public Type DestinationType { get; }
+            public T Value { get; }
+        }
     }
 }
