@@ -54,10 +54,6 @@
       <Project>{3C4D07BA-23B5-4A63-92CF-F3BF892B7329}</Project>
       <Name>SharpFileSystem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharpFileSystem.Resources\SharpFileSystem.Resources.csproj">
-      <Project>{34CA60AC-D3A0-4A58-BCE1-3CEA55844715}</Project>
-      <Name>SharpFileSystem.Resources</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharpFileSystem.SevenZip\SharpFileSystem.SevenZip.csproj">
       <Project>{EA7CBA29-CFA8-4945-BB64-CCF25078190E}</Project>
       <Name>SharpFileSystem.SevenZip</Name>
