@@ -9,7 +9,7 @@ namespace SharpFileSystem.SharpZipLib
 {
     public class SharpZipLibFileSystem: IFileSystem
     {
-        public ZipFile ZipFile { get; set; }
+        private ZipFile ZipFile { get; set; }
 
         public static SharpZipLibFileSystem Open(Stream s)
         {
@@ -79,7 +79,10 @@ namespace SharpFileSystem.SharpZipLib
         public Stream CreateFile(FileSystemPath path)
         {
             var entry = new MemoryZipEntry();
+            ZipFile.BeginUpdate();
             ZipFile.Add(entry, ToEntryPath(path));
+            ZipFile.CommitUpdate();
+
             return entry.GetSource();
         }
 

@@ -20,7 +20,7 @@ namespace SharpFileSystem.Collections
             }
         }
 
-        private LinkedList<TypeCombinationEntry> _registrations = new LinkedList<TypeCombinationEntry>();
+        private readonly LinkedList<TypeCombinationEntry> _registrations = new LinkedList<TypeCombinationEntry>();
 
         public IEnumerable<TypeCombinationEntry> GetSupportedRegistrations(Type sourceType, Type destinationType)
         {

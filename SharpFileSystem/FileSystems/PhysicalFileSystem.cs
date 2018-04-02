@@ -65,22 +65,31 @@ namespace SharpFileSystem.FileSystems
         public Stream CreateFile(FileSystemPath path)
         {
             if (!path.IsFile)
-                throw new ArgumentException("The specified path is not a file.", "path");
-            return System.IO.File.Create(GetPhysicalPath(path));
+                throw new ArgumentException("The specified path is not a file.", nameof(path));
+            var physicalPath = GetPhysicalPath(path);
+            EnsureDirectoryExist(physicalPath);
+            return System.IO.File.Create(physicalPath);
         }
 
         public Stream OpenFile(FileSystemPath path, FileAccess access)
         {
             if (!path.IsFile)
-                throw new ArgumentException("The specified path is not a file.", "path");
+                throw new ArgumentException("The specified path is not a file.", nameof(path));
             return System.IO.File.Open(GetPhysicalPath(path), FileMode.Open, access);
         }
 
         public void CreateDirectory(FileSystemPath path)
         {
             if (!path.IsDirectory)
-                throw new ArgumentException("The specified path is not a directory.", "path");
+                throw new ArgumentException("The specified path is not a directory.", nameof(path));
             System.IO.Directory.CreateDirectory(GetPhysicalPath(path));
+        }
+
+        private void EnsureDirectoryExist(string path)
+        {
+            var dir = Path.GetDirectoryName(path);
+            if (!System.IO.Directory.Exists(dir))
+                System.IO.Directory.CreateDirectory(dir);
         }
 
         public void Delete(FileSystemPath path)
